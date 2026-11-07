@@ -1,0 +1,10 @@
+CREATE TABLE account(id INTEGER PRIMARY KEY, login TEXT UNIQUE NOT NULL, salt BLOB NOT NULL, hash BLOB NOT NULL);
+CREATE TABLE session(token TEXT PRIMARY KEY, user_id INTEGER NOT NULL REFERENCES account, expires INTEGER NOT NULL);
+CREATE TABLE vehicle(id INTEGER PRIMARY KEY, user_id INTEGER NOT NULL REFERENCES account, plate TEXT NOT NULL, normalized TEXT NOT NULL, vehicle_type TEXT NOT NULL, active INTEGER NOT NULL DEFAULT 1);
+CREATE UNIQUE INDEX vehicle_number ON vehicle(user_id,normalized) WHERE active=1;
+ALTER TABLE booking ADD COLUMN user_id INTEGER REFERENCES account;
+ALTER TABLE booking ADD COLUMN vehicle_id INTEGER REFERENCES vehicle;
+ALTER TABLE booking ADD COLUMN plate TEXT;
+ALTER TABLE booking ADD COLUMN request_id TEXT;
+CREATE UNIQUE INDEX booking_request ON booking(user_id, request_id);
+CREATE INDEX parking_location ON parking(latitude,longitude);
